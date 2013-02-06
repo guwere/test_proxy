@@ -1,0 +1,39 @@
+extends layout
+
+block scripts
+    script(src="socket.io/socket.io.js")
+    script(src="http://code.jquery.com/jquery-1.9.0.min.js")
+    script
+        var socket = io.connect('http://localhost:8009');
+        console.log("connection established at client");
+        socket.on("server happy",function(data){
+            console.log(data);
+        });
+        socket.emit("test","testing connetion...");
+
+        $(document).ready(function(){
+            $("#addr_but").click(function(){
+                var url = $('#url').val();
+                socket.emit("block address",url);
+            });
+
+        });
+
+
+block content
+    h1 Proxy Management System
+
+    form
+      p block based on URL
+      | URL to Block:
+      input#url(type='text')
+      
+      button#addr_but Block URL
+
+    br
+    form
+      p block based on ip
+      | IP to Block:
+      input#ip(type='text')
+      
+      button#ip_but Block IP

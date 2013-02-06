@@ -1,0 +1,14 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+.index_item{
+  color: #001111;
+  font: 25px "Lucida Grande", Helvetica, Arial, sans-serif;
+  border:5px solid gray;
+}
