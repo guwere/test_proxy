@@ -3,7 +3,16 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
-    block scripts  
+    script(src="socket.io/socket.io.js")
+    script(src="http://code.jquery.com/jquery-1.9.0.min.js")
+    script
+        var socket = io.connect('http://localhost:8009');
+        console.log("connection established at client");
+        socket.on("server happy",function(data){
+            console.log(data);
+        });
+
+    block config 
 
   body
     block content

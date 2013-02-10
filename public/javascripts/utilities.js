@@ -1,7 +1,28 @@
 var url_helper = require('url'),
     dns = require('dns'),
+    request = require('request'),
     check = require('validator').check,
     sanitize = require('validator').sanitize;
+
+var blacklist = {};
+var cache = {};
+
+exports.addToCache = function(url,socket){
+    try{
+        //check(url).isUrl();
+        var site = request(url,function(error,res,body){
+
+
+        });
+    }catch(e){
+        console.log("Error in addToCache :"  + e);
+    }
+};
+
+
+exports.refreshCache = function(socket){
+
+};
 
 exports.blockURLHandler = function(url){
     try{
@@ -17,7 +38,7 @@ exports.blockURLHandler = function(url){
             });
         }
     }catch(e){
-        console.log(e);
+        console.log("Error in blockURLHandler: " + e);
     }
     
 };
@@ -51,11 +72,11 @@ exports.requestHandler = function(req,res){
     var host = url_helper.parse(req.url).hostname;
     host = host.replace("www.","");
     if(typeof blacklist[host] == 'undefined'){
-        console.log(host);
+        //console.log(host);
         request(req.url).pipe(res);
     }else{
         res.writeHead(403,"Forbidden");
         res.end();
     }
-    console.log(host);
+    //console.log(host);
  };

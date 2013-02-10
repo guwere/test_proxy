@@ -5,14 +5,12 @@ var express = require('express')
   , app = express()
   , http = require('http')
   , io = require('socket.io')
-  , request = require('request')
   , proxy_routes = require('./routes/proxy')
   , path = require('path');
   
 //utilities,helpers,parsers modules
 var js_functions = require('./public/javascripts/utilities.js');
 
-var blacklist = {};
 
 
 app.configure(function(){
@@ -25,6 +23,7 @@ app.configure(function(){
   app.use(express.methodOverride());
   app.use(app.router);
   app.use(express.static(path.join(__dirname, 'public')));
+
 });
 
 app.configure('development', function(){
@@ -35,16 +34,25 @@ app.configure('development', function(){
 
 app.get('/', proxy_routes.index);
 app.get('/mansys',proxy_routes.mansys);
+app.get('/cache', proxy_routes.cache);
+
 
 var server = http.createServer(app).listen(app.get('port'), function(){
   console.log("Express server management system listening on port " + app.get('port'));
 });
 var sio = io.listen(server);
+sio.set('log level', 1); // reduce logging
+
 
 sio.sockets.on('connection', function (socket) {
     socket.on('block address',js_functions.blockURLHandler);
     socket.on('block ip',js_functions.blockIPHandler);
-
+    socket.on('cache',function(url){
+      js_functions.addToCache(url,socket);
+    });
+    socket.on('refresh request',function(unused){
+      js_functions.refreshCache(socket);
+    });
 });
 
 //----------------------------------------

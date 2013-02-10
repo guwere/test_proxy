@@ -1,23 +1,24 @@
 extends layout
 
-block scripts
-    script(src="socket.io/socket.io.js")
-    script(src="http://code.jquery.com/jquery-1.9.0.min.js")
-    script
-        var socket = io.connect('http://localhost:8009');
-        console.log("connection established at client");
-        socket.on("server happy",function(data){
-            console.log(data);
+block config
+  script
+    $(document).ready(function(){
+        $("#addr_but").click(function(){
+            var url = $('#url').val();
+            socket.emit("block address",url);
         });
-        socket.emit("test","testing connetion...");
-
-        $(document).ready(function(){
-            $("#addr_but").click(function(){
-                var url = $('#url').val();
-                socket.emit("block address",url);
-            });
-
+        
+        $("#ip_but").click(function(){
+            var ip = $('#ip').val();
+            socket.emit("block ip",ip);
         });
+        $("#cache_but").click(function(){
+            var cache_page = $('#cache').val();
+
+            socket.emit("cache",cache_page);
+        });
+
+    });   
 
 
 block content
@@ -32,8 +33,14 @@ block content
 
     br
     form
-      p block based on ip
+      p block based on ip(not finished yet)
       | IP to Block:
-      input#ip(type='text')
-      
+      input#ip(type='text')    
       button#ip_but Block IP
+
+    br
+    form
+      p add website to cache(not finished yet)
+      | website url:
+      input#cache(type='text')     
+      button#cache_but Cache

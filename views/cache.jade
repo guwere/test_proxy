@@ -1,0 +1,19 @@
+extends layout
+
+block config
+
+block content
+    h1 Locally Stored Webpages
+    script
+        $(document).ready(function(){
+            $("#refresh_but").click(function(){
+                socket.emit("refresh request","");
+            });
+            
+        });
+
+    form
+      | Click to update list:
+      
+      button#refresh_but Refresh
+
