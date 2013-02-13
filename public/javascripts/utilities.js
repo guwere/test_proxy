@@ -1,10 +1,13 @@
 var url_helper = require('url'),
     dns = require('dns'),
     request = require('request'),
+    validator = require('validator'),
     check = require('validator').check,
-    sanitize = require('validator').sanitize;
+    sanitize = require('validator').sanitize,
+     prettyjson = require('prettyjson');
 
-var blacklist = {};
+var blacklist_url = [];
+var blacklist_ip = [];
 var cache = {};
 
 exports.addToCache = function(url,socket){
@@ -29,13 +32,18 @@ exports.blockURLHandler = function(url){
         check(url).isUrl();
         var parsed = url_helper.parse(url).path;
         parsed = parsed.replace("www.","");
-        console.log(parsed);
-        if(!(parsed in blacklist)){
+        console.log("url to block : " + parsed);
+        if(!(parsed in blacklist_url)){
+            blacklist_url.push(parsed);
             dns.resolve4(parsed,function(err,addrs){
-                console.log(addrs);
-                blacklist[parsed] = addrs;
-                console.log(blacklist);
+                for(var i = 0; i < addrs.length; i++){
+                    if(blacklist_ip.indexOf(addrs[i]) == -1){
+                        blacklist_ip.push(addrs[i]);
+                    }
+                }
+                console.log("ips blocked : " + blacklist_ip);
             });
+            console.log("urls blocked: " + blacklist_url);
         }
     }catch(e){
         console.log("Error in blockURLHandler: " + e);
@@ -46,23 +54,25 @@ exports.blockIPHandler = function(ip){
    try{
         check(ip).isIP();
         console.log(ip);
+        if(blacklist_ip.indexOf(ip) == -1){
+            blacklist_ip.push(ip);
+        }
         dns.reverse(ip,function(err,domains){
             if(domains !== undefined){
                 for(var i = 0; i < domains.length;i++){
                     var parsed = url_helper.parse(domains[i]).path;
                     parsed = parsed.replace("www.","");
                     console.log(parsed);
-                    if(typeof blacklist[parsed] == 'undefined'){
-                        blacklist[parsed] = [ip];
-                    }else{
-                        blacklist[parsed].push(ip);
+                    if(blacklist_url.indexOf(parsed) == -1){
+                        blacklist_url.push(parsed);
                     }
                 }
             }
-            console.log(blacklist);
+            console.log("blocked urls : " + blacklist_url);
+            console.log("blocked ips : " + blacklist_ip);
         });
     }catch(e){
-        console.log(e);
+        console.log("in blockIPHandler : " + e);
     }
 
 };
@@ -71,12 +81,13 @@ exports.blockIPHandler = function(ip){
 exports.requestHandler = function(req,res){
     var host = url_helper.parse(req.url).hostname;
     host = host.replace("www.","");
-    if(typeof blacklist[host] == 'undefined'){
-        //console.log(host);
+    console.log("the host is : " + host);
+    console.log(prettyjson.render(req.headers));
+    if(blacklist_url.indexOf(host) == -1 && blacklist_ip.indexOf(host) == -1){
         request(req.url).pipe(res);
     }else{
         res.writeHead(403,"Forbidden");
         res.end();
     }
-    //console.log(host);
+
  };
