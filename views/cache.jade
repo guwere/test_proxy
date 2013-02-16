@@ -16,4 +16,8 @@ block content
       | Click to update list:
       
       button#refresh_but Refresh
-
+      -for (var id in pages)
+        - var page = pages[id]
+        - console.log(page);
+        div
+            a(href="webpages/#{page}") #{page}

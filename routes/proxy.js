@@ -1,4 +1,4 @@
-
+var fs = require('fs');
 /*
  * GET home page.
  */
@@ -14,5 +14,9 @@ exports.mansys = function(req, res){
 };
 
 exports.cache = function(req, res){
-  res.render('cache', { title: 'Local Cache' });
+    fs.readdir("./webpages",function(err,files){
+        res.render('cache', { title: 'Local Cache',pages:files});
+
+    });
 };
+

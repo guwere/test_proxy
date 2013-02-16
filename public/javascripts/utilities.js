@@ -4,11 +4,10 @@ var url_helper = require('url'),
     validator = require('validator'),
     check = require('validator').check,
     sanitize = require('validator').sanitize,
-     prettyjson = require('prettyjson');
+    prettyjson = require('prettyjson') ;
 
 var blacklist_url = [];
 var blacklist_ip = [];
-var cache = {};
 
 exports.addToCache = function(url,socket){
     try{
@@ -81,10 +80,17 @@ exports.blockIPHandler = function(ip){
 exports.requestHandler = function(req,res){
     var host = url_helper.parse(req.url).hostname;
     host = host.replace("www.","");
-    console.log("the host is : " + host);
-    console.log(prettyjson.render(req.headers));
+    // console.log("host : ".blue + host);
+    // console.log("request header".blue);
+    // console.log(prettyjson.render(req.headers));
     if(blacklist_url.indexOf(host) == -1 && blacklist_ip.indexOf(host) == -1){
-        request(req.url).pipe(res);
+    //     console.log("Sending proxy request... \n");
+        var proxy_res = request(req.url,function(err,pr,body){
+            console.log("response header for : ".blue + req.url);
+            console.log(prettyjson.render(pr.headers));
+        });
+        proxy_res.pipe(res);
+
     }else{
         res.writeHead(403,"Forbidden");
         res.end();
