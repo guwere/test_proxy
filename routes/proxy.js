@@ -1,6 +1,7 @@
 var fs = require('fs');
 /*
- * GET home page.
+the different request listeners depending on the chosen 
+route assigned in app.js
  */
 
 

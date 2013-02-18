@@ -12,10 +12,10 @@ block config
             var ip = $('#ip').val();
             socket.emit("block ip",ip);
         });
-        $("#cache_but").click(function(){
-            var cache_page = $('#cache').val();
+        $("#phrase_but").click(function(){
+            var phrase_text = $('#phrase').val();
 
-            socket.emit("cache",cache_page);
+            socket.emit("filter phrase",phrase_text);
         });
 
     });   
@@ -33,14 +33,14 @@ block content
 
     br
     form
-      p block based on ip(not finished yet)
+      p block based on ip(not fully finished yet)
       | IP to Block:
       input#ip(type='text')    
       button#ip_but Block IP
 
     br
     form
-      p add website to cache(not finished yet)
-      | website url:
-      input#cache(type='text')     
-      button#cache_but Cache
+      p add keyword phrase to filter(does not work properly)
+      | phrase:
+      input#phrase(type='text')     
+      button#phrase_but Add

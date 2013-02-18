@@ -7,6 +7,8 @@
   },
   "dependencies": {
     "express": "3.1.0",
-    "jade": "*"
+    "jade": "*",
+    "prettyjson": "0.7.1",
+    "validator": "0.4.24"
   }
 }
